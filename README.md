@@ -1,6 +1,6 @@
 # E-commerce Real-Time Analytics & Demand Prediction Pipeline
 
-A production-grade, end-to-end data pipeline for real-time e-commerce analytics and demand forecasting. This project demonstrates industry-standard practices for building scalable data pipelines suitable for a Data Engineer portfolio.
+A production-grade, end-to-end data pipeline for real-time e-commerce analytics and demand forecasting. This project demonstrates industry-standard practices for building scalable data pipelines.
 
 ## 🏗️ Architecture
 
