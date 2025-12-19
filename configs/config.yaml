@@ -1,0 +1,77 @@
+# E-commerce Data Pipeline Configuration
+
+kafka:
+  bootstrap_servers: "localhost:9092"
+  topic: "ecommerce_events"
+  consumer_group: "spark_streaming_group"
+  auto_offset_reset: "earliest"
+
+gcp:
+  project_id: "your-gcp-project-id"
+  bucket_name: "ecommerce-data-lake"
+  dataset_id: "ecommerce_analytics"
+  location: "us-central1"
+  
+  # GCS Paths
+  bronze_path: "gs://{bucket_name}/bronze/events"
+  silver_path: "gs://{bucket_name}/silver/cleaned_events"
+  gold_path: "gs://{bucket_name}/gold/aggregated"
+
+bigquery:
+  # Tables
+  raw_events_table: "raw_events"
+  daily_sales_table: "daily_sales"
+  demand_predictions_table: "demand_predictions"
+  category_revenue_table: "category_revenue"
+  
+  # Partitioning
+  partition_field: "event_date"
+  cluster_fields: ["product_id", "category"]
+
+spark:
+  app_name: "EcommerceStreamingPipeline"
+  master: "local[*]"
+  checkpoint_location: "gs://{bucket_name}/checkpoints/streaming"
+  batch_interval: "60 seconds"
+  
+  # Window configurations
+  windows:
+    short_window: "5 minutes"
+    long_window: "1 hour"
+
+ml:
+  model_dir: "gs://{bucket_name}/models"
+  features:
+    - "historical_sales"
+    - "rolling_avg_7d"
+    - "rolling_avg_30d"
+    - "day_of_week"
+    - "month"
+    - "is_weekend"
+    - "category"
+  
+  models:
+    baseline:
+      name: "linear_regression"
+      type: "sklearn.linear_model.LinearRegression"
+    advanced:
+      name: "xgboost"
+      type: "xgboost.XGBRegressor"
+      params:
+        n_estimators: 100
+        max_depth: 6
+        learning_rate: 0.1
+
+airflow:
+  dag_id: "ecommerce_pipeline"
+  schedule_interval: "@daily"
+  default_args:
+    owner: "data_engineer"
+    retries: 3
+    retry_delay_minutes: 5
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/pipeline.log"
+

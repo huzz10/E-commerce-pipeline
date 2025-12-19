@@ -1,0 +1,22 @@
+# Dockerfile for Spark jobs
+FROM apache/spark-py:3.5.0
+
+# Install additional Python packages
+RUN pip install --no-cache-dir \
+    kafka-python==2.0.2 \
+    google-cloud-storage==2.14.0 \
+    google-cloud-bigquery==3.13.0 \
+    pyyaml==6.0.1
+
+# Set working directory
+WORKDIR /app
+
+# Copy project files
+COPY . /app/
+
+# Set Python path
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+# Default command
+CMD ["/bin/bash"]
+
